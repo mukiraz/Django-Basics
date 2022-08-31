@@ -11,3 +11,6 @@ def details(request):
 
 def list(request):
     return HttpResponse("list")
+
+def getProductsByCategory(request, category):
+    return  HttpResponse(f'{category} kategorisindeki ürünler.')
