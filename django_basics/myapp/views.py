@@ -1,7 +1,13 @@
-from django.http.response import HttpResponse
-from django.shortcuts import render
+from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.shortcuts import render, redirect, reverse
 
 # Create your views here.
+
+data = {
+    "telefon": "telefon kategorisindeki ürünler",
+    "bilgisayar": "bilgisayar kategorisindeki ürünler",
+    "elektronik": "elektronik kategorisindeki ürünler",
+}
 
 def index(request):
     return HttpResponse("index")
@@ -9,8 +15,18 @@ def index(request):
 def details(request):
     return HttpResponse("details")
 
-def list(request):
-    return HttpResponse("list")
+def getProductsByCategoryID(request, category_id):
+    try:
+        ids = list(data.keys())
+        category_name = ids[category_id-1]
+        redirect_path = reverse('products_by_category', args =[category_name])
+        return redirect(redirect_path)
+    except IndexError:
+        return HttpResponseNotFound("kategori bulunamadı")
 
 def getProductsByCategory(request, category):
-    return  HttpResponse(f'{category} kategorisindeki ürünler.')
+    try:
+        category_text = data[category]    
+        return HttpResponse(category_text)
+    except KeyError:
+        return HttpResponseNotFound("kategori bulunamadı")
