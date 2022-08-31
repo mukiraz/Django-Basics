@@ -1,6 +1,9 @@
 {% extends 'layout.html' %}
+{% comment %} this html file extends from global layout.html in the global templates folder. we defined global templates folder in the settings.py {% endcomment %}
+{% comment %} we loaded static to load the static files {% endcomment %}
 {% load static %}
 
+{% comment %} page title {% endcomment %}
 {% block page_title %}
     Products
 {% endblock page_title %}
@@ -8,16 +11,19 @@
 
 
 {% block content %}
-
+{% comment %} we added the bootstrap library https://getbootstrap.com/docs/5.2/components/card/ {% endcomment %}
 <div class="container">
     <div class="row">
         <div class="col">
 
 
-            
+            <!--The pipe is used for filtering  -->
             <h1>{{category|title}}</h1>
+            <!--Formatting the datetime value  -->
             <h2>{{now|date:"d.m.Y"}}</h2>
+            {% comment %} if there is more then one product do a loop {% endcomment %}
             {% if products|length > 0 %}
+                {% comment %} loop in products {% endcomment %}
                 {% for product in products %}
                     <div class="card mb-3" >
                         <div class="card-body">
@@ -27,6 +33,7 @@
                                 </div>
                                 <div class="col-md-9">
                                 <div class="card-body">
+                                    {% comment %} the product {% endcomment %}
                                     <h5 class="card-title">{{product|title}}</h5>
                                     <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
                                     <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
@@ -38,7 +45,7 @@
                 {% endfor %}
         
       
-            
+            {% comment %} if there is no product {% endcomment %}
             {% else %}
                 <div class="alert alert-danger" role="alert">
                     <i class="fa fa-exclamation-circle"></i>

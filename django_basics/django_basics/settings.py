@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # myapp application added to the installed_apps list
     'myapp',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,6 +57,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
+            # in order to have a global templates, we defined templates folder in the base directory
             BASE_DIR / "templates"
         ],
         'APP_DIRS': True,
@@ -119,6 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+# in order to have a global static files, we defined static folder in the base directory
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
