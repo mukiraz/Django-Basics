@@ -1,6 +1,7 @@
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render, redirect, reverse
 import datetime
+from .models import Product
 
 # Create your views here.
 
@@ -13,13 +14,20 @@ data = {
 
 # the index page
 def index(request):
-    list_items = ""
-    # we added the category list
-    categories = list(data.keys())
+    products = Product.objects.all()
     
     return render(request, 'index.html', {
-        "categories":categories
+        "products":products
     })
+
+def details(request, id):
+    product = Product.objects.get(pk = id)
+    context = {
+        "product": product
+    }
+
+    return render(request, "details.html", context)
+
 
 
 def getProductsByCategoryID(request, category_id):

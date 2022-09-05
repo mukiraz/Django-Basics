@@ -10,7 +10,7 @@
 
 {% comment %} page title {% endcomment %}
 {% block page_title %}
-    Index
+    products
 {% endblock page_title %}
 
 {% block content %}
@@ -21,13 +21,8 @@
         <div class="col">
             <h1>Ürünler</h1>
             <ul>
-                {% for product in products %}      
-                <li>
-                    {{product.name}} - {{product.price}}
-                </li>      
-
-                {% endfor %}
-
+                <h1>{{product.name}} </h1>
+                <p> {{product.details}} </p>
             </ul>
         </div>
     </div>
