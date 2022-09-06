@@ -1,58 +1,58 @@
-from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
-from django.shortcuts import render, redirect, reverse
+from django.http.response import Http404, HttpResponseNotFound
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 import datetime
 from .models import Product
+from django.db.models import Avg, Min, Max
 
-# Create your views here.
-
-# we assumed that the data dictionary is from a database
 data = {
-    "telefon": ["telefon 1", "telefon 2", "telefon 3"],
-    "bilgisayar": ["bilgisayar 1", "bilgisayar 2"],
-    "elektronik": [],
+    "telefon": ["samsung s20","samsung s21","iphone 12"],
+    "bilgisayar": ["laptop 1","laptop 2"],
+    "elektronik": []
 }
 
-# the index page
 def index(request):
-    products = Product.objects.all()
-    
-    return render(request, 'index.html', {
-        "products":products
-    })
+    products = Product.objects.all().order_by("-price")
+    product_count = Product.objects.filter(isActive=True).count()
+    price = Product.objects.filter(isActive=True).aggregate(Avg("price"), Min("price"), Max("price"))
 
-def details(request, id):
-    product = Product.objects.get(pk = id)
+    context = {
+        "products": products,
+        "product_count": product_count,
+        "price" : price
+    }
+
+    return render(request, 'index.html', context)
+
+def details(request, slug):
+
+    product = get_object_or_404(Product, slug=slug)
+
     context = {
         "product": product
     }
-
     return render(request, "details.html", context)
 
+def getProductsByCategoryId(request, category_id):
+    category_list = list(data.keys())
 
-
-def getProductsByCategoryID(request, category_id):
-    try:
-        ids = list(data.keys())
-        category_name = ids[category_id-1]
-        # we send the category_name as parameter to the products_by_category named url path!!!!
-        # here if the id is 1, category_name is "telephone"
-        # with rewerse function, indeed we call the getProductsByCategory function.
-        redirect_path = reverse('products_by_category', args =[category_name])
-        return redirect(redirect_path)
-        # this exception is used for exceeding the number of products
-    except IndexError:
-        return HttpResponseNotFound("kategori bulunamadı")
+    if category_id > len(category_list):
+        return HttpResponseNotFound("yanlış kategori seçimi")
+        
+    category_name = category_list[category_id-1]
+    
+    redirect_path = reverse("products_by_category", args= [category_name])
+    
+    return redirect(redirect_path)
 
 def getProductsByCategory(request, category):
     try:
-        # we used now variable to see the filter in html page
-        now = datetime.datetime.now()
-        # products variable is a list, it holds products- list
-        products = data[category]    
+        products = data[category]        
         return render(request, 'products.html', {
-            "category":category,
-            "products":products,
-            "now":now
+            "category": category,
+            "products": products,
+            "now": datetime.datetime.now()
         })
-    except KeyError:
-        return HttpResponseNotFound("kategori bulunamadı")
+    except:
+        return HttpResponseNotFound(f"<h1>yanlış kategori seçimi</h1>")
+

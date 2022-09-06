@@ -1,5 +1,4 @@
 {% load static %}
-<!-- This is the main layout-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,23 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    {% comment %} this block is used for inserting css files to the extended content {% endcomment %}
-    {% block css_files %} {% endblock css_files %}
-    <title>{% block page_title %} Layout{% endblock page_title %}</title>
+    {% block css_files %}{% endblock %}
+    <title> {% block page_title %} Layout {% endblock %} </title>
 </head>
 <body>
-    {% comment %} we added the _header.html file {% endcomment %}
     {% include 'partials/_header.html' %}
-    {% block content %}
-
-    {% endblock content %}
-
-    {% comment %} we added the _footer.html file {% endcomment %}
+    {% block content %} {% endblock %}
     {% include 'partials/_footer.html' %}
 
-    {% block js_files %}
-    
-    {% endblock js_files %}
-    
+    {% block js_files %}{% endblock %}
+
 </body>
 </html>
