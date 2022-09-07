@@ -17,8 +17,8 @@ class Product(models.Model):
     description = models.CharField(max_length=200)
     imageUrl = models.CharField(max_length=50)
     isActive = models.BooleanField(default  = True)
-    category = models.ForeignKey(Category, on_delete = models.CASCADE, null = True, related_name="products")
     slug = models.SlugField(default="", blank=True, null=False, db_index=True, unique=True)
+    categories = models.ManyToManyField(Category)
 
     def __str__(self):
         return f"{self.name} {self.price}"
