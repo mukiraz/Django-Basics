@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http.response import HttpResponse
 from datetime import date
+
+from movies.models import Movie
 data = {
     "movies" : [
         {
@@ -60,7 +62,7 @@ data = {
 }
 
 def index(request):
-    movies = data["movies"][-4:]
+    movies = Movie.objects.filter(is_active = True, is_home = True)
     sliders = data["sliders"]
     return render(request, 'index.html', {
         "movies":movies,
@@ -68,16 +70,18 @@ def index(request):
     })
 
 def movies(request):
-    movies = data["movies"]
+    movies = Movie.objects.filter(is_active = True)
     return render(request, 'movies.html', {
         "movies":movies
     })
 
 def movie_details(request, slug):
-    movies = data["movies"]
-    selectedMovie = next(movie for movie in movies if movie["slug"] == slug)
+    movie = get_object_or_404(Movie, slug = slug)    
     return render(request, 'movie-details.html', {
-    'movie':selectedMovie
+    'movie':movie,
+    'genres':movie.genres.all(),
+    'people':movie.people.all(),
+    'videos':movie.video_set.all()
     })
 
 # Create your views here.
