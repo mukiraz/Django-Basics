@@ -16,9 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# http://127.0.0.1:8000         => index
+# http://127.0.0.1:8000/details => details
+# http://127.0.0.1:8000/list    => list
+
+# http://127.0.0.1:8000/products         => index
+# http://127.0.0.1:8000/products/details => details
+# http://127.0.0.1:8000/products/list    => list
+
 urlpatterns = [
-    # we added this path for our application
-    path('products/' , include('myapp.urls')),
-    path('admin/', admin.site.urls)
-    
+    path('products/', include('myapp.urls')),
+    path('admin/', admin.site.urls),
 ]

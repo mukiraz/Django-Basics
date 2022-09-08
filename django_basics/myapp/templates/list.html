@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block page_title %}
-    index.html
+    list.html
 {% endblock page_title %}
    
 {% block content %}
@@ -15,13 +15,6 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <a href="create">create product</a>
-            <hr>
-            <form action="list" method="GET">
-                Kelime : <input type="text" name="q">
-                <button type="submit">Submit</button>
-            </form>
-            
             <ul>
                 {% for product in products %}
                     <li>

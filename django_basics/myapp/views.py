@@ -1,28 +1,56 @@
-from django.http.response import Http404, HttpResponseNotFound
+from django.http.response import Http404, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-import datetime
 from .models import Product
-from django.db.models import Avg, Min, Max
-
-data = {
-    "telefon": ["samsung s20","samsung s21","iphone 12"],
-    "bilgisayar": ["laptop 1","laptop 2"],
-    "elektronik": []
-}
+from .forms import ProductCreateForm
 
 def index(request):
-    products = Product.objects.all().order_by("-price")
-    product_count = Product.objects.filter(isActive=True).count()
-    price = Product.objects.filter(isActive=True).aggregate(Avg("price"), Min("price"), Max("price"))
+    products = Product.objects.filter(isActive=True).order_by("-price")
 
     context = {
         "products": products,
-        "product_count": product_count,
-        "price" : price
     }
 
     return render(request, 'index.html', context)
+
+def list(request):
+    if 'q' in request.GET and request.GET.get('q'):
+        q = request.GET['q']
+        products = Product.objects.filter(name__contains=q).order_by("-price")
+    else:
+        products = Product.objects.all().order_by("-price")
+
+    context = {
+        "products": products,
+    }
+
+    return render(request, 'list.html', context)
+
+def create(request):
+    if request.method == 'POST':
+        product_name = request.POST['product_name']
+        price = request.POST['price']
+        description = request.POST['description']
+        slug = request.POST['slug']
+        error = False
+
+        if(product_name == "" or len(product_name) <= 10):
+            error = True
+
+        if(error):
+            return render(request,"create.html", {
+                "error": True
+            })
+        else:
+            p = Product(name= product_name, description = description, price= price, imageUrl="1.jpg", slug=slug)
+            p.save()
+            return HttpResponseRedirect("list") 
+
+    form = ProductCreateForm()
+        
+    return render(request, "create.html", {
+        "form": form
+    })
 
 def details(request, slug):
 
@@ -33,26 +61,6 @@ def details(request, slug):
     }
     return render(request, "details.html", context)
 
-def getProductsByCategoryId(request, category_id):
-    category_list = list(data.keys())
 
-    if category_id > len(category_list):
-        return HttpResponseNotFound("yanlış kategori seçimi")
-        
-    category_name = category_list[category_id-1]
-    
-    redirect_path = reverse("products_by_category", args= [category_name])
-    
-    return redirect(redirect_path)
 
-def getProductsByCategory(request, category):
-    try:
-        products = data[category]        
-        return render(request, 'products.html', {
-            "category": category,
-            "products": products,
-            "now": datetime.datetime.now()
-        })
-    except:
-        return HttpResponseNotFound(f"<h1>yanlış kategori seçimi</h1>")
 
