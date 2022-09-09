@@ -1,6 +1,10 @@
-/* 
-Here we have the style.css in the myapp
-we have also a global styles.css file.
+.errorlist {
+    list-style-type: none;
+    color: red;
+    margin:0;
+    padding: 0;
+}
 
-Here the styles effect only in the myapp application!!!
-*/
+.invalid input, .invalid textarea {
+    border-color: #dc3545;
+}

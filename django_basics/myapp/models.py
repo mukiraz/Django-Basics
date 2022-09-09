@@ -28,7 +28,7 @@ class Product(models.Model):
     name = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     description = models.CharField(max_length=200)
-    imageUrl = models.CharField(max_length=50) 
+    image = models.FileField(upload_to="images",default="") 
     isActive = models.BooleanField(default=False)
     slug = models.SlugField(default="", blank=True, null=False, db_index=True, unique=True)
     categories = models.ManyToManyField(Category)
@@ -36,3 +36,6 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.price} {self.slug}"
+
+class UploadModel(models.Model):
+    image = models.FileField(upload_to="images")

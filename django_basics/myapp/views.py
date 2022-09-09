@@ -1,8 +1,10 @@
 from django.http.response import Http404, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .models import Product
-from .forms import ProductCreateForm
+from .models import Product, UploadModel
+from .forms import ProductForm, UploadForm
+import random
+import os
 
 def index(request):
     products = Product.objects.filter(isActive=True).order_by("-price")
@@ -28,28 +30,44 @@ def list(request):
 
 def create(request):
     if request.method == 'POST':
-        product_name = request.POST['product_name']
-        price = request.POST['price']
-        description = request.POST['description']
-        slug = request.POST['slug']
-        error = False
+        form = ProductForm(request.POST, request.FILES)
 
-        if(product_name == "" or len(product_name) <= 10):
-            error = True
-
-        if(error):
-            return render(request,"create.html", {
-                "error": True
-            })
-        else:
-            p = Product(name= product_name, description = description, price= price, imageUrl="1.jpg", slug=slug)
-            p.save()
-            return HttpResponseRedirect("list") 
-
-    form = ProductCreateForm()
+        if form.is_valid():
+            form.save()
+            return redirect("product_list") 
+    else:
+        form = ProductForm()
         
     return render(request, "create.html", {
         "form": form
+    })
+
+def edit(request, id):
+    product = get_object_or_404(Product, pk=id)
+
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES, instance=product)
+
+        if form.is_valid():
+            form.save()
+            return redirect("product_list")
+
+    else:
+        form = ProductForm(instance=product)
+
+    return render(request, "edit.html", {
+        "form": form
+    })
+
+def delete(request, id):
+    product = get_object_or_404(Product, pk=id)
+
+    if request.method == "POST":
+        product.delete()
+        return redirect("product_list")
+
+    return render(request, "delete-confirm.html", {
+        "product": product
     })
 
 def details(request, slug):
@@ -60,6 +78,21 @@ def details(request, slug):
         "product": product
     }
     return render(request, "details.html", context)
+
+def upload(request):
+    if request.method == "POST":
+        form = UploadForm(request.POST, request.FILES)
+
+        if form.is_valid():  
+            model = UploadModel(image = request.FILES["image"])
+            model.save()
+            return render(request, "success.html")
+    else:
+        form = UploadForm()
+
+    return render(request, "upload.html", {
+        "form": form
+    })
 
 
 
